@@ -1,1 +1,98 @@
-hello world
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Doing - Reduce Task Anxiety</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .task-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .task-input input[type="text"] {
+            flex: 1;
+            padding: 8px;
+        }
+        .task-input button {
+            padding: 8px 16px;
+        }
+        .tasks {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .completed {
+            text-decoration: line-through;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Vibe Doing</h1>
+        <div class="task-input">
+            <input type="text" id="taskInput" placeholder="Enter your task...">
+            <button onclick="addTask()">Add Task</button>
+        </div>
+        <div class="tasks" id="taskList">
+            <!-- Tasks will be added here -->
+        </div>
+        <h2>Completed Tasks</h2>
+        <div class="tasks" id="completedList">
+            <!-- Completed tasks will be added here -->
+        </div>
+    </div>
+
+    <script>
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const taskList = document.getElementById('taskList');
+            
+            if (input.value.trim() !== '') {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'task-item';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.onclick = function() {
+                    moveToCompleted(taskDiv, this.checked);
+                };
+                
+                const taskText = document.createElement('span');
+                taskText.textContent = input.value;
+                
+                taskDiv.appendChild(checkbox);
+                taskDiv.appendChild(taskText);
+                taskList.appendChild(taskDiv);
+                
+                input.value = '';
+            }
+        }
+
+        function moveToCompleted(taskDiv, isChecked) {
+            const completedList = document.getElementById('completedList');
+            const taskList = document.getElementById('taskList');
+            
+            if (isChecked) {
+                taskDiv.querySelector('span').classList.add('completed');
+                completedList.appendChild(taskDiv);
+            } else {
+                taskDiv.querySelector('span').classList.remove('completed');
+                taskList.appendChild(taskDiv);
+            }
+        }
+    </script>
+</body>
+</html>
+
