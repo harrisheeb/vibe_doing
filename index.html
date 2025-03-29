@@ -71,8 +71,22 @@
     </div>
 
     <script>
-        let tasks = [];
+        let tasks = loadTasksFromCookie() || [];
         let currentMode = 'quick';
+
+        function saveTasksToCookie() {
+            const tasksJson = JSON.stringify(tasks);
+            document.cookie = `vibeDoing_tasks=${tasksJson}; expires=${new Date(Date.now() + 30*24*60*60*1000).toUTCString()}; path=/`;
+        }
+
+        function loadTasksFromCookie() {
+            const cookies = document.cookie.split(';');
+            const tasksCookie = cookies.find(cookie => cookie.trim().startsWith('vibeDoing_tasks='));
+            if (tasksCookie) {
+                return JSON.parse(tasksCookie.split('=')[1]);
+            }
+            return null;
+        }
 
         function addTask(event) {
             event.preventDefault();
@@ -91,6 +105,7 @@
 
             calculateTaskScore(task);
             tasks.push(task);
+            saveTasksToCookie();
             updateTaskDisplay();
             event.target.reset();
         }
@@ -134,6 +149,7 @@
             const task = tasks.find(t => t.id === id);
             if (task) {
                 task.completed = true;
+                saveTasksToCookie();
                 updateTaskDisplay();
                 updateProgress();
             }
