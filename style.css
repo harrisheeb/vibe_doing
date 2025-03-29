@@ -177,11 +177,7 @@ body {
 }
 
 .all-tasks-list {
-    display: none;
-}
-
-.all-tasks-list.visible {
-    display: block;
+    margin-top: 15px;
 }
 
 /* Add styles for completed tasks */
@@ -191,38 +187,4 @@ body {
 
 .task-item.completed .task-content {
     text-decoration: line-through;
-}
-
-/* Add these button styles */
-button[type="submit"] {
-    padding: 10px 20px;
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1em;
-}
-
-button[type="submit"]:hover {
-    background: #388E3C;
-}
-
-/* Update the category button styles to be more specific */
-.task-categories .category-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 20px;
-    background: #eee;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.task-categories .category-btn:hover {
-    background: #e0e0e0;
-}
-
-.task-categories .category-btn.active {
-    background: var(--primary);
-    color: white;
 }

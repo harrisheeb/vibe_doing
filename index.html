@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vibe Doing - Reduce Task Anxiety</title>
-    <link rel="stylesheet" type="text/css" href="./style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
@@ -64,7 +64,7 @@
             <button class="toggle-all-btn" onclick="toggleAllTasks()">
                 Show All Tasks
             </button>
-            <div id="allTasksList" class="all-tasks-list">
+            <div id="allTasksList" class="all-tasks-list" style="display: none;">
                 <!-- All tasks will appear here -->
             </div>
         </div>
@@ -209,10 +209,13 @@
             const allTasksList = document.getElementById('allTasksList');
             const toggleBtn = document.querySelector('.toggle-all-btn');
             
-            allTasksList.classList.toggle('visible');
-            toggleBtn.textContent = allTasksList.classList.contains('visible') 
-                ? 'Hide All Tasks' 
-                : 'Show All Tasks';
+            if (allTasksList.style.display === 'none') {
+                allTasksList.style.display = 'block';
+                toggleBtn.textContent = 'Hide All Tasks';
+            } else {
+                allTasksList.style.display = 'none';
+                toggleBtn.textContent = 'Show All Tasks';
+            }
         }
     </script>
 </body>
