@@ -134,23 +134,70 @@ body {
 }
 
 .progress-section {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 30px;
+    text-align: center;
 }
 
 .progress-circles {
     display: flex;
-    justify-content: space-around;
-    margin: 20px 0;
+    justify-content: center;
+    margin-top: 20px;
 }
 
 .circle-progress {
-    width: 80px;
-    height: 80px;
     position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
+
+.circle-progress::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(var(--primary) calc(var(--progress) * 1%), #f0f0f0 0);
+}
+
+.circle-progress::after {
+    content: '';
+    position: absolute;
+    width: 85%;
+    height: 85%;
+    border-radius: 50%;
+    background: white;
+}
+
+.circle-progress .progress-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 0 10px;
+}
+
+.circle-progress .progress-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.circle-progress .progress-label {
+    font-size: 14px;
+    color: #666;
+    margin-top: 4px;
+    line-height: 1.2;
+}
+
+#dailyProgress { --progress-color: #4CAF50; }
+#weeklyProgress { --progress-color: #2196F3; }
+#levelProgress { --progress-color: #FF9800; }
 
 .all-tasks-section {
     background: white;

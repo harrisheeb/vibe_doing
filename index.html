@@ -75,9 +75,12 @@
         <div class="progress-section">
             <h2>Progress</h2>
             <div class="progress-circles">
-                <div class="circle-progress" id="dailyProgress"></div>
-                <div class="circle-progress" id="weeklyProgress"></div>
-                <div class="circle-progress" id="levelProgress"></div>
+                <div class="circle-progress" id="progress">
+                    <div class="progress-content">
+                        <div class="progress-value">0%</div>
+                        <div class="progress-label">Tasks Completed</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -186,6 +189,7 @@
             const task = tasks.find(t => t.id === id);
             if (task) {
                 task.completed = true;
+                task.completedAt = new Date().toISOString(); // Add completion timestamp
                 saveTasksToCookie();
                 updateTaskDisplay();
                 updateProgress();
@@ -205,8 +209,20 @@
         }
 
         function updateProgress() {
-            // Implementation for progress tracking and gamification
-            // This would update the progress circles and level system
+            if (tasks.length === 0) {
+                updateCircleProgress('progress', 0);
+                return;
+            }
+            
+            const completedTasks = tasks.filter(task => task.completed).length;
+            const progress = (completedTasks / tasks.length) * 100;
+            updateCircleProgress('progress', progress);
+        }
+
+        function updateCircleProgress(circleId, progress) {
+            const circle = document.getElementById(circleId);
+            circle.style.setProperty('--progress', progress);
+            circle.querySelector('.progress-value').textContent = `${Math.round(progress)}%`;
         }
 
         function toggleAllTasks() {
