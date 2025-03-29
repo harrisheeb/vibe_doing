@@ -4,95 +4,157 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vibe Doing - Reduce Task Anxiety</title>
-    <style>
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .task-input {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .task-input input[type="text"] {
-            flex: 1;
-            padding: 8px;
-        }
-        .task-input button {
-            padding: 8px 16px;
-        }
-        .tasks {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .task-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .completed {
-            text-decoration: line-through;
-            color: #888;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>Vibe Doing</h1>
+        
+        <div class="mode-switch">
+            <button class="mode-btn active" onclick="switchMode('quick')">Quick Wins</button>
+            <button class="mode-btn" onclick="switchMode('frog')">Eat That Frog</button>
+        </div>
+
         <div class="task-input">
-            <input type="text" id="taskInput" placeholder="Enter your task...">
-            <button onclick="addTask()">Add Task</button>
+            <form class="task-form" onsubmit="addTask(event)">
+                <input type="text" id="taskInput" placeholder="What needs to be done?" required>
+                
+                <div class="slider-group">
+                    <div class="slider-container">
+                        <label>Importance (1-5)</label>
+                        <input type="range" class="slider" min="1" max="5" value="3" id="importanceSlider">
+                    </div>
+                    <div class="slider-container">
+                        <label>Urgency (1-5)</label>
+                        <input type="range" class="slider" min="1" max="5" value="3" id="urgencySlider">
+                    </div>
+                    <div class="slider-container">
+                        <label>Brain Power (1-5)</label>
+                        <input type="range" class="slider" min="1" max="5" value="3" id="brainPowerSlider">
+                    </div>
+                </div>
+
+                <select id="timeEstimate">
+                    <option value="15">< 15 mins</option>
+                    <option value="30">30 mins</option>
+                    <option value="60">1 hour</option>
+                    <option value="120">2 hours</option>
+                    <option value="180">3+ hours</option>
+                </select>
+
+                <div class="task-categories">
+                    <button type="button" class="category-btn" onclick="toggleCategory(this)">Work</button>
+                    <button type="button" class="category-btn" onclick="toggleCategory(this)">Personal</button>
+                    <button type="button" class="category-btn" onclick="toggleCategory(this)">Health</button>
+                    <button type="button" class="category-btn" onclick="toggleCategory(this)">Learning</button>
+                </div>
+
+                <button type="submit">Add Task</button>
+            </form>
         </div>
-        <div class="tasks" id="taskList">
-            <!-- Tasks will be added here -->
+
+        <div class="priority-tasks">
+            <h2>Current Priorities</h2>
+            <div id="taskList">
+                <!-- Top 3 priority tasks will appear here -->
+            </div>
         </div>
-        <h2>Completed Tasks</h2>
-        <div class="tasks" id="completedList">
-            <!-- Completed tasks will be added here -->
+
+        <div class="progress-section">
+            <h2>Progress</h2>
+            <div class="progress-circles">
+                <div class="circle-progress" id="dailyProgress"></div>
+                <div class="circle-progress" id="weeklyProgress"></div>
+                <div class="circle-progress" id="levelProgress"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        function addTask() {
-            const input = document.getElementById('taskInput');
-            const taskList = document.getElementById('taskList');
+        let tasks = [];
+        let currentMode = 'quick';
+
+        function addTask(event) {
+            event.preventDefault();
             
-            if (input.value.trim() !== '') {
-                const taskDiv = document.createElement('div');
-                taskDiv.className = 'task-item';
-                
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.onclick = function() {
-                    moveToCompleted(taskDiv, this.checked);
-                };
-                
-                const taskText = document.createElement('span');
-                taskText.textContent = input.value;
-                
-                taskDiv.appendChild(checkbox);
-                taskDiv.appendChild(taskText);
-                taskList.appendChild(taskDiv);
-                
-                input.value = '';
+            const task = {
+                id: Date.now(),
+                text: document.getElementById('taskInput').value,
+                importance: parseInt(document.getElementById('importanceSlider').value),
+                urgency: parseInt(document.getElementById('urgencySlider').value),
+                brainPower: parseInt(document.getElementById('brainPowerSlider').value),
+                timeEstimate: parseInt(document.getElementById('timeEstimate').value),
+                categories: Array.from(document.querySelectorAll('.category-btn.active')).map(btn => btn.textContent),
+                completed: false,
+                score: 0
+            };
+
+            calculateTaskScore(task);
+            tasks.push(task);
+            updateTaskDisplay();
+            event.target.reset();
+        }
+
+        function calculateTaskScore(task) {
+            if (currentMode === 'quick') {
+                task.score = (task.importance * 0.3) + (task.urgency * 0.3) - (task.brainPower * 0.4);
+            } else {
+                task.score = (task.importance * 0.4) + (task.urgency * 0.2) + (task.brainPower * 0.4);
             }
         }
 
-        function moveToCompleted(taskDiv, isChecked) {
-            const completedList = document.getElementById('completedList');
+        function updateTaskDisplay() {
             const taskList = document.getElementById('taskList');
-            
-            if (isChecked) {
-                taskDiv.querySelector('span').classList.add('completed');
-                completedList.appendChild(taskDiv);
-            } else {
-                taskDiv.querySelector('span').classList.remove('completed');
+            taskList.innerHTML = '';
+
+            const sortedTasks = tasks
+                .filter(task => !task.completed)
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 3);
+
+            sortedTasks.forEach(task => {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'task-item';
+                taskDiv.innerHTML = `
+                    <input type="checkbox" class="task-checkbox" onclick="completeTask(${task.id})">
+                    <div class="task-content">
+                        <div>${task.text}</div>
+                        <div class="task-meta">
+                            <span class="task-score">Score: ${task.score.toFixed(1)}</span>
+                            <span>${task.timeEstimate} mins</span>
+                            ${task.categories.map(cat => `<span>${cat}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
                 taskList.appendChild(taskDiv);
+            });
+        }
+
+        function completeTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = true;
+                updateTaskDisplay();
+                updateProgress();
             }
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            tasks.forEach(calculateTaskScore);
+            updateTaskDisplay();
+        }
+
+        function toggleCategory(btn) {
+            btn.classList.toggle('active');
+        }
+
+        function updateProgress() {
+            // Implementation for progress tracking and gamification
+            // This would update the progress circles and level system
         }
     </script>
 </body>
 </html>
-
