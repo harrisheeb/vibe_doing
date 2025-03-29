@@ -73,6 +73,9 @@
     <script>
         let tasks = loadTasksFromCookie() || [];
         let currentMode = 'quick';
+        
+        // Update display when page loads
+        updateTaskDisplay();
 
         function saveTasksToCookie() {
             const tasksJson = JSON.stringify(tasks);
