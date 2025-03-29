@@ -60,6 +60,15 @@
             </div>
         </div>
 
+        <div class="all-tasks-section">
+            <button class="toggle-all-btn" onclick="toggleAllTasks()">
+                Show All Tasks
+            </button>
+            <div id="allTasksList" class="all-tasks-list" style="display: none;">
+                <!-- All tasks will appear here -->
+            </div>
+        </div>
+
         <div class="progress-section">
             <h2>Progress</h2>
             <div class="progress-circles">
@@ -122,6 +131,7 @@
         }
 
         function updateTaskDisplay() {
+            // Update priority tasks
             const taskList = document.getElementById('taskList');
             taskList.innerHTML = '';
 
@@ -131,21 +141,41 @@
                 .slice(0, 3);
 
             sortedTasks.forEach(task => {
-                const taskDiv = document.createElement('div');
-                taskDiv.className = 'task-item';
-                taskDiv.innerHTML = `
-                    <input type="checkbox" class="task-checkbox" onclick="completeTask(${task.id})">
-                    <div class="task-content">
-                        <div>${task.text}</div>
-                        <div class="task-meta">
-                            <span class="task-score">Score: ${task.score.toFixed(1)}</span>
-                            <span>${task.timeEstimate} mins</span>
-                            ${task.categories.map(cat => `<span>${cat}</span>`).join('')}
-                        </div>
-                    </div>
-                `;
+                const taskDiv = createTaskElement(task);
                 taskList.appendChild(taskDiv);
             });
+
+            // Update all tasks list
+            const allTasksList = document.getElementById('allTasksList');
+            allTasksList.innerHTML = '';
+
+            const allSortedTasks = [...tasks].sort((a, b) => b.score - a.score);
+            allSortedTasks.forEach(task => {
+                const taskDiv = createTaskElement(task);
+                if (task.completed) {
+                    taskDiv.classList.add('completed');
+                }
+                allTasksList.appendChild(taskDiv);
+            });
+        }
+
+        function createTaskElement(task) {
+            const taskDiv = document.createElement('div');
+            taskDiv.className = 'task-item';
+            taskDiv.innerHTML = `
+                <input type="checkbox" class="task-checkbox" 
+                       onclick="completeTask(${task.id})" 
+                       ${task.completed ? 'checked' : ''}>
+                <div class="task-content">
+                    <div>${task.text}</div>
+                    <div class="task-meta">
+                        <span class="task-score">Score: ${task.score.toFixed(1)}</span>
+                        <span>${task.timeEstimate} mins</span>
+                        ${task.categories.map(cat => `<span>${cat}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+            return taskDiv;
         }
 
         function completeTask(id) {
@@ -173,6 +203,19 @@
         function updateProgress() {
             // Implementation for progress tracking and gamification
             // This would update the progress circles and level system
+        }
+
+        function toggleAllTasks() {
+            const allTasksList = document.getElementById('allTasksList');
+            const toggleBtn = document.querySelector('.toggle-all-btn');
+            
+            if (allTasksList.style.display === 'none') {
+                allTasksList.style.display = 'block';
+                toggleBtn.textContent = 'Hide All Tasks';
+            } else {
+                allTasksList.style.display = 'none';
+                toggleBtn.textContent = 'Show All Tasks';
+            }
         }
     </script>
 </body>
