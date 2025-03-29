@@ -64,6 +64,9 @@
             <button class="toggle-all-btn" onclick="toggleAllTasks()">
                 Show All Tasks
             </button>
+            <button class="archive-all-btn" onclick="archiveAllCompleted()" style="display: none;">
+                Archive All Completed
+            </button>
             <div id="allTasksList" class="all-tasks-list" style="display: none;">
                 <!-- All tasks will appear here -->
             </div>
@@ -174,6 +177,7 @@
                         ${task.categories.map(cat => `<span>${cat}</span>`).join('')}
                     </div>
                 </div>
+                ${task.completed ? `<button class="archive-btn" onclick="archiveTask(${task.id})">Archive</button>` : ''}
             `;
             return taskDiv;
         }
@@ -208,14 +212,29 @@
         function toggleAllTasks() {
             const allTasksList = document.getElementById('allTasksList');
             const toggleBtn = document.querySelector('.toggle-all-btn');
+            const archiveAllBtn = document.querySelector('.archive-all-btn');
             
             if (allTasksList.style.display === 'none') {
                 allTasksList.style.display = 'block';
+                archiveAllBtn.style.display = 'block';
                 toggleBtn.textContent = 'Hide All Tasks';
             } else {
                 allTasksList.style.display = 'none';
+                archiveAllBtn.style.display = 'none';
                 toggleBtn.textContent = 'Show All Tasks';
             }
+        }
+
+        function archiveTask(id) {
+            tasks = tasks.filter(task => task.id !== id);
+            saveTasksToCookie();
+            updateTaskDisplay();
+        }
+
+        function archiveAllCompleted() {
+            tasks = tasks.filter(task => !task.completed);
+            saveTasksToCookie();
+            updateTaskDisplay();
         }
     </script>
 </body>

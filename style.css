@@ -82,7 +82,7 @@ body {
 .task-item {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
     padding: 15px;
     border-bottom: 1px solid #eee;
 }
@@ -158,6 +158,14 @@ body {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-bottom: 20px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toggle-all-btn, .archive-all-btn {
+    align-self: flex-start;
 }
 
 .toggle-all-btn {
@@ -187,4 +195,35 @@ body {
 
 .task-item.completed .task-content {
     text-decoration: line-through;
+}
+
+.archive-btn {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+    margin-left: 10px;
+    transition: background-color 0.2s;
+}
+
+.archive-btn:hover {
+    background-color: #cc0000;
+}
+
+.archive-all-btn {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.2s;
+}
+
+.archive-all-btn:hover {
+    background-color: #cc0000;
 }
